@@ -162,3 +162,26 @@ Life Cycle Methods of Spring bean
 	Step 3-> Register destroy hook using registerShutdownHook()
 	The registerShutdownHook method exists in AbstractApplicationContext interface
 	we can create object for AbstractApplicationContext and use
+
+_____________________________________________________________________________________________________
+Autowiring in Spring
+	-Feature of spring framework in which spring container which injects dependencies automatically.
+	-Autowiring can't be used for Primitive and String types. We can only use it with reference types.
+
+->Types of Autowiring
+	1. XML => with modes 
+			a. no(by default)
+			b. byName(by name of bean)
+			c. byType(by type of bean)
+			d. constructor(with constructor)
+			e. autodetect(deprecated since spring 3)
+
+	2. Annotation=> @Autowired
+
+	1. XML =>
+		a.byname-> It'll search for the bean with same name as that of property in bean class inside config.xml and matches both
+			<bean name="bean_name" autowire="byName">
+		b.byType-> It'll search for the bean type with the same type of property inside config.xml and mathces
+			<bean name="bean_name" autowire="byType">
+		c.constructor->
+			<bean name="bean_name" autowire="constructor">

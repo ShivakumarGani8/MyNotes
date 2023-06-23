@@ -49,4 +49,4 @@
 4)Git hub
     1. To add remote origin -> git remote add origin origin_link
     2. To see added remote origin-> git remote -v
-    3. To push into remote repository-> git push -u origin main
+    3. To push into remote repository-> git push -u origin branch_name
