@@ -45,3 +45,8 @@
     2. To toggle between branches -> git checkout branch_name
     3. To merge branches(By standing main branch) -> git merge branch_name
     4. To directly create and switch to branch -> git branch -b branch_name creates and swithched to the branch created 
+
+4)Git hub
+    1. To add remote origin -> git remote add origin origin_link
+    2. To see added remote origin-> git remote -v
+    3. To push into remote repository-> git push -u origin main
