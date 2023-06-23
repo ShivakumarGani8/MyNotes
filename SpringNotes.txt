@@ -1,0 +1,137 @@
+Ways of injectiong dependencies
+1) Dependency injection Using setter injection
+-Let's say we have a class Student which have properties studentName, studentId, studentAddress.
+-Now we have to create setters for all the properties in Student class
+-We have to create a xml in src folder
+ Example: config.xml (This name may be anything)
+
+A. Including beans to xmln
+step1 ->create xml file in src of java
+step2 ->Include beans EX: Here we are included beans for p-schema
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:p="http://www.springframework.org/schema/p"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd">
+</beans>
+
+B. Injecting Primitive types
+step 1 -> property injection using setter injection
+    1. Using property & value
+ <bean class="com.springcore.Student" name="student1">
+ 	<property name="studentId">
+ 		<value>1234</value>
+ 	</property>
+ 	<property name="studentName" value="Shivakumar" />
+ 	<property name="studentAddress">	
+ 		<value>Jamakhandi Karnataka</value>
+ 	</property>
+ </bean>
+    
+    2. Using p-schema
+ <bean class="com.springcore.Student" name="student2" p:studentName="Sudeep" p:studentId="1235" p:studentAddress="Linganur"/>
+ 
+step 2 -> setting in App class
+-create object for ClassPathXmlApplicationContext and we can getBean using getBean()
+ApplicationContext context=new ClassPathXmlApplicationContext("config.xml");
+        Student student1=(Student) context.getBean("student1");
+
+-----------------------------------------------------------------------------------------------------
+
+C. Injecting Collection types
+1. Injecting List:
+	<!--Injection List type-->
+ 	<property name="phones">
+ 		<list>
+ 			<value>7760776517</value>
+ 			<value>7676478324</value>
+ 			<value>9980496689</value>
+ 		</list>
+ 	</property>
+
+2. Injecting Set
+	<!-- Injecting Set type -->
+	<property name="addresses">
+		<set>
+			<value>Jamakhandi</value>
+			<value>Linganur</value>
+			<value>Jamakhandi</value>
+		</set>
+	</property>
+
+3. <!-- Injecting Map type -->
+	<property name="courses">
+		<map>
+			<entry key="Java" value="2 Month's"/>
+			<entry key="Python" value="1.5 Month's"/>
+			<entry key="C" value="1 Month"></entry>
+		</map>
+	</property>
+
+-----------------------------------------------------------------------------------------------------
+
+D. Injecting Reference types
+Lets say we have 2 classes name Engine & Car which have properties stroke, cc, volume & color, price, drive, engine respectivly. Where Car is dependent upon Engine
+
+Step 1-> Set properties of Engine.
+Step 2-> Inject the properties and bean created previously for Engine
+	Now we can inject property of Engine with the help of
+	A. Using property & ref tag
+		<property name="engine">
+		<ref bean="engine_bean_name"/>
+		</property>
+	
+	B. Using ref as a attribute to property tag
+		<property name="engine" ref="engine_bean_name" />
+	
+	C. Using p-schema
+		<bean class="com.springcore.refinjection.Car name="car1" p:color="red" p:price="10.5L" p:drive="4WD" p:engine-ref="engine_bean_name" />
+-----------------------------------------------------------------------------------------------------
+
+2) Dependency injection Uing constructor injection
+	A. Using constructor-arg & value
+	<bean class="class_name" name="bean_name">
+		<constructor-arg>
+			<value>value_ToBe_Set</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>value_ToBe_Set</value>
+		</constructor-arg>
+	</bean>
+
+	B. Using constructor-arg
+	<bean class="class_name" name="bean_name>
+		<constructor-arg value="value_ToBe_Set">
+		<constructor-arg value="value_ToBe_Set">
+	</bean>
+
+	C. Using c-schema
+	<bean class="class_name" name="bean_name" c-property="value_ToBe_Set" c-property="value_ToBe_Set" />
+
+***Ambiguity problems for constructor injection***
+While injecting it'll consider all the args as a String type hence, The following issues may occour
+->Here the highest prefrence will be given to constructor with arguments of String type.
+->If String args does not exist the prefrence will be given to 1st occuring constructor.
+->We can overcome this issue by specifying the type of arg in xml itself
+	<constructor-arg value="value_ToBe_Set" type="Data_type_of_argument">
+->Even we can specify the index of the argumenet in constructor-arg tag
+	<constructor-arg value="value_ToBe_Set" type="Data_type_of_argument" index="Index_Of_argument">
+_____________________________________________________________________________________________________
+Life Cycle Methods of Spring bean
+-> Spring provides two important methods for every bean
+	public void init()->To intialize bean
+	public void destroy()->To clear bean
+	-We can change the name of the above methods but, we should keep the signature same
+
+-> Life cycle
+	1. Creates object of bean provided
+	2. Intialize/sets properties of bean
+	3. Calls init()/provided method
+	4. Then we can read and use the bean
+	5. Calls destroy()
+	6. Destroyes the bean
+
+-> Configure technique
+	1. Using XML
+	2. Spring interface
+	3. Java Annotation

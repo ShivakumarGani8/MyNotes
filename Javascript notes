@@ -1,0 +1,141 @@
+mozila developer network
+https://developer.mozilla.org/en-US/docs/web/api/Element/classList
+
+
+	JavaScript is a scripting language used to interact	with the content in web browser and more recently in other places
+
+1.alert(Message) -> alerts a popup in the page
+
+2.console.log() ->shows the output on the console
+
+3.document.<tagelement>.innerhtml = "Message" ->injects the message on the web page in the given tagelement.
+
+	-methods of adding javascript to a html document
+	-> inline javascript using <script> tag
+	-> write script in the external page with extension .js and link using <script> tag. 
+
+creating variable -
+	-> var variable_name; 
+
+Premative data types - 
+	-> Numertic - Numbers
+	-> String - Text
+	-> Boolean - true/false
+	-> null
+	-> undefined
+
+Operators - 
+	(=(assignment),+ * - / (arithmatic operators), +=, -= *= /=)
+	-> unary operator ++, --
+
+case-
+	-> when we try to add a number and a string number javascripts concat both and gives string
+	-> except addition if we try to do any other operations if one value is number and other is string number it do the maths and gives the result 
+
+Conditional statement -
+	-> if(boolean){
+		// code block
+	}
+	-> if(boolean){
+		// code block
+	} else {
+		// code block
+	}
+	
+Logical operator ( &&  || )
+Ternary operator (condition ? true : false) a== b? stat 1: stat 2
+
+-> Arrays
+	var var_name ;
+	var_name= ["string ", number, boolean]
+
+Properties of array
+	-> length
+	-> Methods(reverse(), shift() removes first value of array, unshift() adds elements to start of the array, pop() remove last element, push() adds element at the end of array, slice(position, number) removes no of elements from the position, indexOf(element, position) searches returns index of the element from the position specified, join("separator") joins the elements of array with specified string )
+
+ 
+Fuctions - starts with keyword fuction
+	-> named functions
+	-> Anonymous
+	-> immediately invoked
+		ex Named function: function findBiggest( a, b){
+			var res= a>b ? a: b;
+			console.log(res);
+		}
+
+		ex anonymous function: 
+		var a=45;
+		var b=23;
+			var theBiggest = ( function(){
+			var result;
+			result = a>b ? a : b;
+			return result
+			} )
+			console.log(theBiggest())
+
+
+		invoked fuctional expression: 
+		var theBiggest = ( function(a, b){
+			var result;
+			result = a>b ? a : b;
+			return result
+			} ) (34, 23)
+			console.log(theBiggest)
+
+Variable scope - global and local
+
+let and const-
+	-> const :  once variable defined it cannot be changed in the code
+	-> let : Block scope variable - even a variable created with let cannot be accessed in nested block inside the block.
+
+Object - 
+	var course = new Object();
+
+	course.title ="java script training";
+	course.date= 22/02/22;
+	course.views =0 ; 
+
+			OR
+	course={course.title : "java script training",
+	course.date : 22/02/22, course.views : 0 ; 
+}
+
+Object Constructor - create constructor using fuction 			keyword and call it with new keyword 
+
+Closures - a function inside another fuction that relies on the variables of outside function
+
+BOM(Browser Object Model) - objects used to create browser [Window is super object for browser]
+
+DOM (document Object Model)
+
+DOM Methods : with the help of these methods we can access aswell as modify the elements(class, attribute  ,outerHtml, innerHTML ) of the document
+
+
+			  getElementById(someID) selects the 	element with specified ID
+
+			  getElementByClassName(className) - select the element with specified class name
+
+			  getElementByTagName(Html tag) - select 
+			  the element with specified tagelement
+			  
+			  querySelector() -select the element which first matches the query
+			  
+			  querySelectorAll() -selects all the element which matches the specified query
+
+
+DOM Events - 1) Browser level events(Browser behavior (load, window resize etc.))
+	COMMON EVENTS := LOAD, EROOR, ONLINE/OFFLINE, RESIZE,SCROLL
+
+			 2) Dom level events(content interaction(click, focus, submit, etc.))
+
+	COMMON EVENTS := FOCUS, BLUR, RESETS/SUBMIT, MOUSE EVENETS
+
+eventListeners :=
+
+Loops - 1.for(initialization, condition, update){}
+		2.while(condition){}
+		3.do{} while(condition)
+
+		break- breaks the whole loop when statement trigered
+		continue- skips current loop when statement is trigered
+		
