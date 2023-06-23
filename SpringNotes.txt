@@ -155,3 +155,10 @@ Life Cycle Methods of Spring bean
 	Step 3-> Register destroy hook using registerShutdownHook()
 	The registerShutdownHook method exists in AbstractApplicationContext interface
 	we can create object for AbstractApplicationContext and use
+
+	3.Implementing bean lifecycle using Annotation
+	Step 1-> Use annotations PostConstructor(Acts as init()) & PreDestroy(Acts as destroy())
+	Step 2-> Import annotations in Configure.xml
+	Step 3-> Register destroy hook using registerShutdownHook()
+	The registerShutdownHook method exists in AbstractApplicationContext interface
+	we can create object for AbstractApplicationContext and use
