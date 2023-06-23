@@ -1,5 +1,8 @@
 Ways of injectiong dependencies
 1) Dependency injection Using setter injection
+2) Dependency injection Using constructor injection
+
+1) Dependency injection Using setter injection
 -Let's say we have a class Student which have properties studentName, studentId, studentAddress.
 -Now we have to create setters for all the properties in Student class
 -We have to create a xml in src folder
@@ -88,7 +91,8 @@ Step 2-> Inject the properties and bean created previously for Engine
 		<bean class="com.springcore.refinjection.Car name="car1" p:color="red" p:price="10.5L" p:drive="4WD" p:engine-ref="engine_bean_name" />
 -----------------------------------------------------------------------------------------------------
 
-2) Dependency injection Uing constructor injection
+2) Dependency injection Using constructor injection
+
 	A. Using constructor-arg & value
 	<bean class="class_name" name="bean_name">
 		<constructor-arg>
@@ -135,3 +139,19 @@ Life Cycle Methods of Spring bean
 	1. Using XML
 	2. Spring interface
 	3. Java Annotation
+
+	1.Implmenting bean lifecycle using XML
+	Step 1-> Create intialize method in bean class this name may be anything.
+	Step 2-> Create destroy method in bean class this name may be anything.
+	Step 3-> Specify the intialize and destroy methods in xml bean with the help of init-method and destroy-method attributes
+		Example: <bean class="class_name" name="bean_name" init-method="intialize_method_name" destroy-method="destroy_method_name">
+	Step 4-> Register destroy hook using registerShutdownHook()
+	The registerShutdownHook method exists in AbstractApplicationContext interface
+	we can create object for AbstractApplicationContext and use
+
+	2.Implementing bean lifecycle using interface
+	Step 1-> Implement two interfaces IntializingBean(acts as init()) & DisposibleBean(acts as destroy())
+	Step 2-> override the methods of these interfaces in bean class
+	Step 3-> Register destroy hook using registerShutdownHook()
+	The registerShutdownHook method exists in AbstractApplicationContext interface
+	we can create object for AbstractApplicationContext and use
