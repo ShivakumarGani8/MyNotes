@@ -185,3 +185,90 @@ Autowiring in Spring
 			<bean name="bean_name" autowire="byType">
 		c.constructor->
 			<bean name="bean_name" autowire="constructor">
+
+	2. Annotation @Autorwired
+		-We can define @Autorwired in 3 Ways
+		a. Before the property
+		b. Before the setter
+		c. Before the constructor
+		-@Qualifier("bean_name")-> We can specify bean name using @Qualifier which maps the bean with specified name
+
+_____________________________________________________________________________________________________
+Standalone collections
+	-With the help of Standalone we can create a bean for list and we can use it again and again throughout the file with the help of id of bean defined
+	EXamples:
+	-> Standalone List
+ 		<util:list list-class="java.util.ArrayList" id="address">
+ 				<value>Jamakhandi</value>
+ 				<value>Mudhol</value>
+ 				<value>Bagalkote</value>
+ 		</util:list>
+ 	-> Standalone Set
+ 		<util:set set-class="java.util.HashSet" id="phone_number">
+ 			<value>1234567890</value>	
+ 			<value>1245678933</value>	
+ 			<value>1234567890</value>
+ 			<value>7894561237</value>
+ 		</util:set>
+ 	-> standalone Map
+ 		<util:map map-class="java.util.HashMap" id="courses">	
+ 			<entry key="1"><value>Java</value></entry>	
+ 			<entry key="2"><value>Python</value></entry>	
+ 			<entry key="3"><value>C</value></entry>
+ 		</util:map>
+
+_____________________________________________________________________________________________________
+stereotype Annotation
+	-stereotype annotations help us to create an object of the class directly with the help of @component annotations
+	If we mention @component before the class name it will create object of the class in camelcase format and we can use @value before the property to define the property of he class
+	Example:
+		@Component
+			public class Car {
+				@Value("Red")
+				private String colorString;
+				@Value("10.5")
+				private double price;
+				@Override
+				public String toString() {
+					return "Car [colorString=" + colorString + ", price=" + price + " Lakhs]";
+				}	
+			}
+	-Even we can change name of the class object using @component("object_name")
+	Example:
+		@Component("carObject")
+			public class Car {
+				@Value("Red")
+				private String colorString;
+				@Value("10.5")
+				private double price;
+				@Override
+				public String toString() {
+					return "Car [colorString=" + colorString + ", price=" + price + " Lakhs]";
+				}	
+			}
+	While using the object we can use carObject in driver class
+
+	-> In config file we have to mention 
+	<context:component-scan base-package="com.springcore.stereotype"/> to scan particular package before using stereotype annotaions
+
+	->Injecting collection types using spEL
+	we can inject collections into class using spEL by defining standalone collection in config file.
+	Example:
+	@Value("#{emailId}")
+	private Set<String> emailID;
+_____________________________________________________________________________________________________
+Spring bean scope
+	-> By default the scope of the spring bean will be singleton(i.e the same object will be sent each time we call the bean).
+	-> We can change the scope of the bean with the help of scope attribute
+	Example: scope of bean changed to prototype(i.e. Each time we call the bean new object will be sent)
+		-Using xml
+			<bean class="com.springcore.beanscope.BeanScope" name="scope2" scope="prototype"/>
+		-Using stereotype
+			@Scope("prototype")
+			@Component("beanObject")
+			public class StereoTypeBean {
+				public int getHashCode() {
+					return this.hashCode();
+				}
+			}
+_____________________________________________________________________________________________________
