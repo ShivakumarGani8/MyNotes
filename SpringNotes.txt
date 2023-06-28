@@ -1,6 +1,13 @@
-Ways of injectiong dependencies
-1) Dependency injection Using setter injection
-2) Dependency injection Using constructor injection
+Spring Framework
+	Spring is a depency injection framework work of java which injects the dependencies to make java classess loosely coupled
+
+Ways of injection dependencies
+1] Using XML configuration
+2] Using Annotation
+
+1] Using XML configuration
+	1) Dependency injection Using setter injection
+	2) Dependency injection Using constructor injection
 
 1) Dependency injection Using setter injection
 -Let's say we have a class Student which have properties studentName, studentId, studentAddress.
@@ -8,9 +15,9 @@ Ways of injectiong dependencies
 -We have to create a xml in src folder
  Example: config.xml (This name may be anything)
 
-A. Including beans to xmln
+A. Including xmln schema's
 step1 ->create xml file in src of java
-step2 ->Include beans EX: Here we are included beans for p-schema
+step2 ->Include schemas EX: Here we are included beans for p-schema
 <beans xmlns="http://www.springframework.org/schema/beans"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
  xmlns:p="http://www.springframework.org/schema/p"
@@ -272,3 +279,124 @@ Spring bean scope
 				}
 			}
 _____________________________________________________________________________________________________
+Spring Expression Language
+	->Helps in parsing and executiong of expression with the help of @value Annotation
+	Expressions such as	
+		-Methods, Classes, constructor and objects
+		-char, numerics, operators, keywords and special symbols which return a value
+	The resolved expression inside @Value is executed and assigned to the variable below
+	- Using expressions
+		@Value("{expression}")
+	- Using static methods and variables
+	 	@Value("#{T(class_name).method_name/variable_name}")
+	- Using non static methods and variables
+	 	@Value("{new class_name().method_name/variable_name}")
+	
+	Examples:
+	//Assigning expression inside @value
+	@Value("#{19+123}")
+	int x;
+	//Assigning static methods
+	@Value("#{T(java.lang.Math).sqrt(16)}")
+	int sqrt;
+	
+	//Assigning static variable
+	@Value("#{T(java.lang.Math).PI}")
+	double pi;
+
+	//Assigning non static method
+	@Value("#{new String('Shivakumar')}")
+	String nameString;
+
+=====================================================================================================
+2]Configuration bean with Java configuration(bean without XML)
+	We can configure java bean in two ways without the xml
+	1) With the help of @ComponentScan and @Component
+		-> Here we can configure a java class to scan package instead of xml with the help ComponentScan annotation
+		Syntax:
+			@ComponentScan(basePackages="package_name_ToBe_Scan")
+			class name{}
+		Example:
+				@ComponentScan(basePackages = "com.springcore.noxml")
+				public class JavaConfig {
+				}
+			-In the above example we'll be scanning package named as com.springcore.noxml. It'll scan hole defined package and searches for Component tag
+			We'll be defining @Component annotation to the class which has to be scanned
+			Example:			
+				@Component
+				public class NoXML {}
+			-> In client class we can use these beans with the help of AnnotationConfigApplicationContext class
+		Example:
+			AnnotationConfigApplicationContext con= new AnnotationConfigApplicationCont(JavaConfig.class);
+			WithComponent obj1= con.getBean("withComponent",WithComponent.class);
+			System.out.println(obj1);
+		
+
+	2) Without the @Component and @ComponentScan
+		-> Here we can configure a java configuration class with the help of @Configuration annotation instead of @ComponentScan which acts as a Configuration file.
+		-> We can define methods with @Bean which will be responsible for creating and returing an object of bean class required
+		Example:
+			@Configuration
+			public class JavaConfig {
+				@Bean
+				public WithoutComponent getObject() {
+					return new WithoutComponent();
+				}
+			}
+		Whenever we call the methout getObject it'll return the object of the required class.
+		-> In client class we can use these beans with the help of AnnotationConfigApplicationContext class
+		Example:
+			AnnotationConfigApplicationContext con= new AnnotationConfigApplicationContext(JavaConfig.	class);
+			WithoutComponent obj2= con.getBean("getObject",WithoutComponent.class);
+			System.out.println(obj2);
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Spring JDBC
+	Spring JDBC is a popwerful mechanism to connect and execute the queries to database
+	-> It makes use of spring JDBC module to fire queries with the help of JdbcTemplate class
+	-> important methods of JdbcTemplate
+		-update()->  insert, update and delete queries
+		-execute()-> select queries
+	*****Connect to database*****
+
+	- Connecting to database with XML
+	Step 1-> Set properties of DriverManagerDataSource
+	We can connect to database by setting the 4 properties of the database i.e. DriverClass, url, username & password
+	Example: Set properties using property/p-schema
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" name="dataSource">
+ 		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+ 		<property name="url" value="jdbc:mysql://localhost:3306/springjdbc"/>
+ 		<property name="username" value="root"/>
+ 		<property name="password" value="Shiva@9980"/>
+ 	</bean>
+
+	Step 2-> Set objecect for JdbcTemplate using property/ p-schema
+	<bean class="org.springframework.jdbc.core.JdbcTemplate" name="jdbcTemplate" p:dataSource-ref="dataSource"/>
+
+	Step 3-> Create object for ClassPathXmlApplicationContext
+	prepare a query and update
+	Example: Inserting into table
+        String query="insert into Student(id,name,city) value(?,?,?)";
+        int result= jdbc.update(query,3,"Sudeep","Linganur");
+	Updating a table
+		String query="update student set name=?, city=? where id=?";
+		jdbcTemplate.update(query,student.getName(), student.getCity(),student.getId());
+	Deleting a table 
+		String query="delete from Student where id=?";
+		jdbcTemplate.update(query,id);
+
+	Selecting from table with the help of RowMapper
+		-For retrieving the data we have two methods in JdbcTemplate
+		1. queryForObject(query, RowMapper<T> ,parameters); -> For single object
+		Example:
+			String query="select * from student where id=?";
+			RowMapper<Student> rowMapper=new RowMapperImpl();
+			jdbcTemplate.queryForObject(query, rowMapper,id);
+
+		2. queryForObject(query, RowMapper<T>);-> For multiple objects
+			String query= "select * from Student";
+			List<Student> students= jdbcTemplate.query(query, new RowMapperImpl());
+		
+		RowMapper is an interface of java which returns the object of the result returned from the query.
+		-We have to provide implmentation class for the RowMapper and logic inside rowMap method of rowMap to return the object
+ 
