@@ -1,0 +1,270 @@
+What is Hiberante?
+    Hiberante is framework of java which simplifies the develoment of java application that interacts with database.
+    -Hiberante is a ORM(object Relational Mapping) tool.
+    -It is a light weight opensource tool.
+    -It is non-invasive framework i.e. it won't force programmers to extend/implement any class/interfaces
+    -> It work's on the basis of mapping done from javaclasses to DB.
+
+    ***Creating Maven project for Hiberante
+    Step 1: Create a maven project of quickstart
+    Step 2: Add requried maven dependencies in pom.xml
+    -For hibernate we need 2 dependencies(Hiberante & mysql)
+        <dependency>
+			<groupId>org.hibernate</groupId>
+            
+			<artifactId>hibernate-core</artifactId>
+			<version>5.6.15.Final</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>6.0.2</version>
+		</dependency>
+    Step 3: Save and update project
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+We can configure Hiberante in two ways
+1] With XML configuration
+2] With Annotation configuration
+    
+    1] With XML configuration-> Inside hibernate.cfg.xml file 
+    => Setting configuration
+    Step 1: Include dtd for hibernate configuration
+    Example:
+        <!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+    Step 2: Add tag for hibernate-configuration
+        <hibernate-configuration>
+        </hibernate-configuration>
+    Step 3: Add session-factory tag inside hibernate-configuration tag
+        <hibernate-configuration>
+	        <session-factory>
+	        </session-factory>
+        </hibernate-configuration>
+    Step 4: Include attributes such as driver_class, url, username, password etc., for session factory  using property tag
+    Example:
+        <hibernate-configuration>
+	        <session-factory>
+	        	<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+	        	<property name="connection.url">jdbc:mysql://localhost:3306/hiberJDBC</property>
+	        	<property name="connection.username">root</property>
+	        	<property name="connection.password">root</property>
+	        	<property name="dialect">org.hibernate.dialect.MySQLDialect</property>//Selecting database
+                <property name="hbm2ddl.auto">update</property> //Creates the table everytime if we use create or creates for the first time and updates the table if we use update
+                <property name="show_sql">true</property> //Shows the query in console
+	        </session-factory>
+        </hibernate-configuration>
+    Step 4: Now we can create object for SessionFactory interface in hibernate using Configuration class and use it accordingly in App class
+    Ecample:
+        Configuration cfg= new Configuration();
+        cfg.configure("hibernate.cfg.xml");
+        SessionFactory factory=cfg.buildSessionFactory();
+
+    => Mapping Entity  
+        We can map the properties defined above inside session-factory tag for particular class using  mapping tag
+        Example:
+                <mapping class="fully_qualified_name of a class" />
+
+    => Setting entity class using Annotation
+        -We can set class as a entity using @Entity tag which means the table will be created    with name of class 
+        -We can change name of the table using name property in Entity/Table Annotation
+            Ex: @Entity(name="student_details") / @Table(name="student_details")
+            Note:
+            @Entity tag changes name of entity in whole application.
+            @Table will changes only name of table inside DB.
+        -We can set any one attribute as a primary key using @Id attribute
+        Example:
+        @Entity
+        public class Student {
+        	@Id
+        	private int id;
+        	private String name;
+        	private String address;
+        }
+            In the above example a table with name Student and id attribute as a primary key to the table will be created.
+    
+    Step5: create/open session and save entity into DB
+    -Once we created SessionFactory object we have to open session using openSession() of SessionFactory object
+        Session session=factory.openSession(); //If session already opened no need to open new session we can use getCurrentSession()
+    -Start transactions over DB using beginTransaction() of Session object
+        Transaction transaction=session.beginTransaction();
+    -Save the session
+        session.save(entity_object_ref);
+    -commit transactions done over DB
+        transaction.commit();
+    -close current session
+        session.close();
+
+    EX: Our final App looks like
+    class App{
+        public static void main(String[] arr){
+            Configuration cfg= new Configuration();
+            cfg.configure("hibernate.cfg.xml");
+            SessionFactory factory=cfg.buildSessionFactory();
+            Session session= factory.openSession();
+            Transaction transaction= session.beginTransaction();
+            session.save(entity_object_ref); // Where entity_object_ref, will be our reference variable for entity class
+            transaction.commit();
+            session.close();
+        }
+    }
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Commonly used hibernate Annotations
+1) @Entity-used to mark any class as Entity.
+2) @Table-used to change the table details.
+3) @Id-used to mark column as id(primary key).
+4) @GeneratedValue-hibernate will automatically generate values primary key.
+5) @Column-Used to specify column mapping(To change column namme in the table).
+6) @Transient-This tells hibernate not to save this field(Column will not be created for specified property in class)
+7) @Temporal-over date field tells hibernate the format in which the date needs to be saved in DB.
+8) @Lob-tells hibenrate this is a large object, not a simple object(Such as CLOB/BLOB).
+9) @OneToOne, @OneTo Many, @ManyToOne, @JoinColumn etc.
+10) @Embedale-when we are mapping two classes but, all columns of the classes to be marged as one we'll mark other class with @Embedale annotation.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+->Fetching data from database
+    -We can fetch data from database using get(arg 1, arg 2) & load(arg 1, arg 2) of session interface.
+    get() & load() method's excepts two arguments
+        where, arg1-> class name where data to be intialize(whose data to be fetched)
+               arg2-> primary_key of the table
+
+    Difference between get() and load():
+        get():
+        - searches the data avalability in cached memory if data not exists it'll write the query into database immediately. 
+        -It'll return null if data not exists in both cached memory and database.
+        -Use case when we are not sure about data existance in the database.
+
+        load():
+        -creates persistent object for the class and write's the query into database only when the object is used/properties of object are used.
+        -It'll throw ObjectNotFoundException if data not exists in both cached memory and database.
+        -Use case when we are sure about the data existance in the database.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Mapping in hibernate(OneToOne,OneToMany,ManyToOne,ManyToMany)
+1) OneToOne->
+    If we have a relation between two tables such as each data in one table will have only one answer(i.e., one row will be mapped to only one row in other table).
+    EX:
+        Quetion and Answer table
+        -> Each questions will have only one output
+        To map tables we'll use @OneToOne annotation.
+
+            @OneToOne(mappedBy="question")
+	        private Answer answer;
+
+            where, mappedBy attribute specifies the particular property has mapped by which class(Column will be created in the other table other than the specified class).
+            -> The joined column will have defalt name such as classname_columnname of the child table.
+            -> To override the column name we can use @JoinColumn with name attribute.
+            EX: @OneToOne(mappedBy="question")
+            @JoinColumn(name="question_id")
+	        private Answer answer;
+
+2) OneToMany-ManyToOne
+    If we have a relation between two tables such that data in one table will have many answers(i.e., one row will be mapped to many rows in other table).
+    ->To build OneToMany relation we'll make use of List type attribute as property in one class.
+    EX:
+        Person and BankAccount
+        -> In Person class we'll have a list attribute named as bankaccounts.
+            private List<BankAccount> bankaccounts;
+        To map many BankAccounts to one Person we'll make use of @OneToMany Annotation in Person class
+            @OneToMany(mappedBy="person")
+            private List<BankAccounts> bankaccounts;
+
+        -> In BankAccounts class we'll have a attribute named as person of type Person.
+            private Person person;
+        To map bankaccounts person to BankAccounts we'll make use of @ManyToOne Annotation in BankAccounts class.
+            @ManyToOne
+            private Person person;
+
+3) ManyToMany
+    If we have a relation between two tables such that data in both the tables will have many answers(i.e., many rows will be mapped to many rows in other table).
+    ->To build ManyToMany relation we'll make use of List type attribute as a property in both the classess.
+    EX:
+        Employee and Project
+        -> In Employee class we'll have a list attribute named as projects of type Project.
+            private List<Project> projects;
+        To map many Projects to one Employee we'll make use of @ManyToMany Annotation in Employee class
+            @ManyToMany
+            private List<Project> projects;
+
+        -> In Project class we'll have a list attribute named as employees of type Employee.
+            private List<Employee> employees;
+        To map many employees to project we'll make use of @ManyToMany Annotation in Project class.
+            @ManyToMany
+            private List<Employee> employees;
+        
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Hibernate Object State(Transient, Persistent, Detached and Removed)
+Every object in hibernate we'll go through the 4 states namely: transient, persistent, detached and removed states.
+
+1) Transient State:
+    Whenever a new instance is created through hibernate it'll go to the transient state.
+2) Persistent State:
+    Once the instance created is saved/updated it'll go the persistent state.
+    i.e. When Save(), persist(), saveOrUpdate() or update() methods are called from session object.
+3) Detached State:
+    Once the instance created is detached/cleared it'll go the detached state.
+    i.e. When detach(), clear(), close() or evict() methods are called from session object.
+4) Removed State:
+    When a instance created is deleted or enters into garbage then it'll in removed state.
+    i.e. remove() method is called from session object.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Caching in Hibernate(First level and Second level)
+    -> Caching is the concept of storing the object in a cache instead of doing query over DB again and again for the same object.
+    -> Through caching query will be written only for the 1st time to be DB and object is cached in memory.
+    -> If the same object is called 2nd time the object will be returned from cached memory instead of DB.
+
+In hibernate we'll basically follow 2 types of caching namely first level and second level.
+
+1) First Level(Session level):
+    The first level caching will be by default enabled by hibernate for all the calls.
+    ->Caching will done in Session level(i.e. Query will be written over DB only for 1st time for particular object in a session).
+    ->Once the current session is closed object will be removed from the cache.
+
+2) Second Level(SessionFactory level):
+    ->The second level caching will not be enabled by default in hibernate for all the calls.
+    ->Caching will done in SessionFactory level(i.e. Query will be written over DB only for 1st time for particular object in a SessionFactory).
+    ->Once the current SessionFactory is closed object will be removed from the cache.
+
+
+    -> To make a hibernate second level caching 
+    Step1: we need to include dependencies of cache provider in pom.xml
+            <!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
+		    <dependency>
+		    	<groupId>net.sf.ehcache</groupId>
+		    	<artifactId>ehcache</artifactId>
+		    	<version>2.10.4</version>
+		    </dependency>
+    
+    Step2: Also we have to include hibernate dependency for cache provider
+            <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		    <dependency>
+		    	<groupId>org.hibernate</groupId>
+		    	<artifactId>hibernate-core</artifactId>
+		    	<version>5.6.15.Final</version>
+		    </dependency>
+
+    Step3: Include properties of cache in session-factory tag of hibenrate config xml.
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+
+    Step4: To make a class to cacheble we'll make use of @Cacheble annotion over a class name.
+
+        EX: If we want to make class Cacheble
+            @Cacheble
+            class class_name{}
+        -Even we can define some properties to cached class using @Cache annotation to protects it's usage
+            @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+            class class_name{}
+        -Now the cached object will have only read access over current SessionFactory.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

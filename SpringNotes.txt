@@ -400,3 +400,4 @@ Spring JDBC
 		RowMapper is an interface of java which returns the object of the result returned from the query.
 		-We have to provide implmentation class for the RowMapper and logic inside rowMap method of rowMap to return the object
  
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
