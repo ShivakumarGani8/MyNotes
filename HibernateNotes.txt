@@ -214,9 +214,28 @@ Every object in hibernate we'll go through the 4 states namely: transient, persi
     i.e. remove() method is called from session object.
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Hibernate Query Languge->
+-With the help of get() & load() functions of session interface to write ower own queryies we'll go with hql to fetch own records.
+-To execute query we need to create a object for Query interface using session object.
+    Ex: Query query= session.createQuery("from Entity_name");
 
+    Note:
+    We'll not use select clause in hql
+
+-Once query is created we can use methods of query interface to do operations over DB.
+    Ex: List<Entity> list= query.list(); //Which will return List object for the entity provided.
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Executing Native Queries->
+-To execute query we need to create a object for Query interface using session interface.
+    Ex: Query query= session.createSQLQuery("select * from Table_name");
+
+-Once query is created we can use methods of query interface to do operations over DB.
+    Ex: List<Object> list= query.list(); //Which will return List object for the entity provided.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 Caching in Hibernate(First level and Second level)
     -> Caching is the concept of storing the object in a cache instead of doing query over DB again and again for the same object.
     -> Through caching query will be written only for the 1st time to be DB and object is cached in memory.
