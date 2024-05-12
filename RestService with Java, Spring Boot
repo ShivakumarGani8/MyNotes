@@ -242,3 +242,106 @@ Now the follwing message will be returned back when an employee with particular 
         return errorMessage;
     }
 
+
+********************************************************************************************
+                     Spring Data JPA with SpringBoot
+Step 1:-> Add jpa dependencies to the pom.xml file
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+        <version>3.1.6</version>
+    </dependency>
+
+Step 2:-> Create EmployeeEnitity class with following attributes in com.spring.springbootdemo.entity package.
+ 
+        @Entity
+        public class EmployeeEntity {
+            @Id
+            private String employeeId;
+            private String firstName;
+            private String lastName;
+            private String emailId;
+            private String department;
+        }
+    
+Step 3:-> Create a repository interface extending JPARepository interface in com.spring.springbootdemo.repository package.
+    public interface EmployeeRepository extends JpaRepository<EmployeeEntity, String> {
+    }
+
+
+-------------------------------------------------
+EmployeeV2Controller class to control the requests for DB
+
+@RestController
+@RequestMapping("/v2/employees")
+public class EmployeeV2Controller {
+
+    @Qualifier("employeeV2ServiceImpl")
+    @Autowired
+    private IEmployeeService employeeService;
+
+    @PostMapping
+    public Employee save(@RequestBody Employee employee){
+        return employeeService.save(employee);
+    }
+
+    @GetMapping
+    public List<Employee> getAllEmployees(){
+        return employeeService.getAllEmployees();
+    }
+
+    @GetMapping("/{id}")
+    public Employee getEmployeeById(@PathVariable String id){
+        return employeeService.getEmployeeById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteEmployeeById(@PathVariable String id){
+        return employeeService.deletEmployeeById(id);
+    }
+}
+
+------------------------------------------------------------
+Service class implementation for data persist to DB
+
+@Service
+public class EmployeeV2ServiceImpl implements IEmployeeService{
+
+    @Autowired
+    private EmployeeRepository employeeRepo;
+
+    @Override
+    public Employee save(Employee employee) {
+        if(employee.getEmployeeId()==null || employee.getEmployeeId().isEmpty()){
+            employee.setEmployeeId(UUID.randomUUID().toString());
+        }
+        EmployeeEntity employeeEntity = new EmployeeEntity();
+        BeanUtils.copyProperties(employee,employeeEntity);
+        employeeRepo.save(employeeEntity);
+        return employee;
+    }
+
+    @Override
+    public List<Employee> getAllEmployees() {
+        List<EmployeeEntity> employeeEntities= employeeRepo.findAll();
+        return employeeEntities.stream().map(employeeEntity -> {
+            Employee employee=new Employee();
+            BeanUtils.copyProperties(employeeEntity,employee);
+            return employee;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Employee getEmployeeById(String id) {
+        EmployeeEntity employeeEntity=employeeRepo.findById(id).get();
+        Employee employee=new Employee();
+        BeanUtils.copyProperties(employeeEntity,employee);
+        return employee;
+    }
+
+    @Override
+    public String deletEmployeeById(String id) {
+        employeeRepo.deleteById(id);
+        return "Employee deleted with ID: "+id;
+    }
+}
