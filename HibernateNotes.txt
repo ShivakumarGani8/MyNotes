@@ -123,7 +123,7 @@ Commonly used hibernate Annotations
 6) @Transient-This tells hibernate not to save this field(Column will not be created for specified property in class)
 7) @Temporal-over date field tells hibernate the format in which the date needs to be saved in DB.
 8) @Lob-tells hibenrate this is a large object, not a simple object(Such as CLOB/BLOB).
-9) @OneToOne, @OneTo Many, @ManyToOne, @JoinColumn etc.
+9) @OneToOne, @OneToMany, @ManyToOne, @JoinColumn etc.
 10) @Embedale-when we are mapping two classes but, all columns of the classes to be marged as one we'll mark other class with @Embedale annotation.
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

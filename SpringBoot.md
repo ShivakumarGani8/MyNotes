@@ -2,25 +2,43 @@ What is springboot?
     Spring Boot is a framework from the Spring team that makes it easy to create stand-alone, production-grade Spring applications. It provides defaults for code and annotation configuration to get you started quickly.
 
 SpringBoot modules-
-    Spring Modulith:
-    It enables developers to build well-structured Spring Boot applications and helps them find and work with application   modules driven by the domain.
-    Database Access and Integration:
-    This module provides an abstraction layer on top of JDBC technology and ORM tools, making database access simpler and   avoiding boilerplate code.
-    Spring Vault:
-    It enables you to securely store and manage your application's secrets.
-    Spring Web Flow:
-    It is a web framework that helps you create web applications with a stateful flow.
-    Spring Boot Parent Module:
-    It provides dependency and plugin management for Spring Boot-based applications.
-    Spring-ldap:
-    It simplifies the development of applications that use LDAP by using Spring's familiar template-based approach.
-    Spring for GraphQL:
-    It enables you to easily add GraphQL support to your Spring Boot applications.
-    Spring Testing Module:
-    It provides a number of features to help you test your Spring Boot applications.
-    Application Module Listener:
-    It allows you to listen for events that occur in your Spring Boot application.
 
+1. Spring Boot Starter:
+
+    Starters: A set of convenient dependency descriptors you can include in your application. For example, spring-boot-starter-web for  web applications, spring-boot-starter-data-jpa for JPA-based data access, etc.
+    Starter Parent: Provides default configurations, like default versions of dependencies and common settings.
+
+2. Spring Boot Auto-Configuration:
+
+    Automatically configures Spring application based on the included dependencies. For example, if you have spring-boot-starter-data-jpa in your classpath, Spring Boot automatically configures a DataSource, an EntityManagerFactory, etc.
+    
+3. Spring Boot Actuator:
+
+    Provides production-ready features to help you monitor and manage your application, such as health checks, metrics, and auditing.
+
+4. Spring Boot CLI (Command Line Interface):
+
+    Allows you to quickly run and test Spring Boot applications using Groovy scripts. It’s a lightweight way to develop Spring Boot applications without needing a full Java IDE.
+    
+5. Spring Boot DevTools:
+
+    Provides tools that enhance the development experience, including automatic restarts, live reload, and configurations specifically for development environments.
+
+6. Spring Boot Security:
+
+    Integrates with Spring Security to provide out-of-the-box security features like authentication, authorization, and protection against common attacks.
+
+7. Spring Boot Testing:
+
+    Provides testing support, including integration with JUnit, TestNG, and Mocking frameworks. It simplifies writing tests for Spring Boot applications.
+
+8. Spring Boot Configuration:
+
+    Supports externalized configuration via properties files, YAML files, environment variables, and command-line arguments.
+
+9. Spring Boot Logging:
+
+    Provides built-in logging support with sensible defaults and integrations with logging frameworks like Logback and Log4j.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Boot Internals-> Application class(Provided by spring boot)

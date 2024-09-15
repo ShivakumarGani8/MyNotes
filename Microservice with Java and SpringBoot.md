@@ -88,6 +88,51 @@
         }
     }
 
+*****************************************************************************************************************************************
+Handling Exceptions for ProductService
+    Step1:-> Create a class ProductServiceCustomException extending RuntimeException marking with necessary Annotations.
+    @Data
+    public class ProductServiceCustomException extends RuntimeException {
+        private ErrorCode errorCode;
+
+        public ProductServiceCustomException(String message, ErrorCode errorCode){
+            super(message);
+            this.errorCode=errorCode;
+        }
+    }s
+
+    Step2:-> Create a class RestResponseEntityExceptionHandler with @ControllerAdviser annotation which will handle all the rest entity exceptions extending ResponseEntityExceptionHandler.
+    Step3:-> Create a method which handles the ProductServiceCustomException's
+    Step4:-> Mark method with @ExceptionHandler annotation(ClassName.class)
+    Step5:-> Create a model class ErrorResponse which will be returned back to the caller
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public class ErrorResponse {
+            private String errorMessage;
+            private ErrorCode errorCode;
+        }
+
+    - Now our ControllerAdviser class looks like which will handle our exceptions and returned to the caller.
+
+    @ControllerAdvice
+    public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+        @ExceptionHandler(ProductServiceCustomException.class)
+        public ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductServiceCustomException exception){
+
+            ErrorResponse errorResponse= ErrorResponse.builder()
+                    .errorMessage(exception.getMessage())
+                    .errorCode(exception.getErrorCode())
+                    .build();
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+
 ******************************************************************************************************
 => ServiceRegistery for application
     - Runs on port 8761
@@ -283,6 +328,7 @@ Now we can connect to the configserver for common configuration files
 
 ********************************************************************************************
 => Implementing Feign client to order-service
+
 Step1:-> Include OpenFeign dependencies in order-service pom.
 Step2:-> Mark OrderServiceApplication class with @EnableFeignClients annotation.
 Step3:-> Create a package external to keep all the external files seperately.
@@ -331,6 +377,7 @@ Step2:-> Provide implementation to the decode method of ErrorDecoder interface.
             } catch (IOException e) {
                 throw new CustomException("Internal Server Error", ErrorCode.INTERNAL_SERVER_ERROR,500);
             }
+        }
 
 Step3:-> Create ErrorResponse class under external.response package.
 
@@ -364,10 +411,132 @@ Step5:-> Create a Controller advicer class RestResponseEntityHandler by extendin
                 ErrorResponse.ErrorResponseBuilder builder = ErrorResponse.builder();
                 builder.errorMessage(exception.getMessage());
                 builder.errorCode(exception.getErrorCode());
-                ErrorResponse errorResponse= builder.build();
+                ErrorResponse    errorResponse= builder.build();
 
                 return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(exception.getStatus()));
             }
         }   
 
-Now we are all set where we can successfully handles the exceptions that are coming from the Product-service.
+Now we are all set where we can successfully handles the exceptions that are coming from the Product-service. 
+
+*********************************************************************************************************
+=> PaymentService-
+    This service will handle all the payment requests comming.
+
+Step1:-> Create a spring project
+    Step2:-> Add necessary dependencies
+    Step3:-> Create a repo for common properties and create a property file add common properties
+    Step4:-> Add properties of repo to the ConfigServer application file to connect to repository
+
+        server:
+          port: 8081
+        
+        spring:
+          application:
+            name: PAYMENT-SERVICE
+          cloud:
+            config:
+              server:
+                git:
+                  uri: https://github.com/ShivakumarGani8/ecommerce-app-config
+                  clone-on-start: true
+        
+        eureka:
+          instance:
+            prefer-ip-address: true
+          client:
+            fetch-registry: true
+            register-with-eureka: true
+            service-url:
+              defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka/}
+    
+Now we can connect to the configserver for common configuration files
+
+********************************Controller layer for PaymentService**************************************
+@RestController
+@RequestMapping("/payment")
+public class PaymentController {
+
+    @Inject
+    private IPaymentService paymentService;
+
+    @PostMapping("/doPayment")
+    public ResponseEntity<Long> doPayment(@RequestBody PaymentRequest paymentRequest){
+        return new ResponseEntity<>
+                (paymentService.makePayment(paymentRequest), HttpStatus.OK);
+    }
+}
+
+************************************Entity class*********************************************************
+@Table(name = "PAYMENT_TABLE")
+public class TransactionDetails {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "PAYMENT_ID")
+    @Id
+    private long id;
+
+    @Column(name = "ORDER_ID")
+    private long orderId;
+
+    @Column(name = "PAYMENT_MODE")
+    @Enumerated(EnumType.STRING)
+    private PaymentMode paymentMode;
+
+    @Column(name = "REFERENCE_NUMBER")
+    private String referenceNumber;
+
+    @Column(name = "PAYMENT_DATE")
+    private Instant paymentDate;
+
+    @Column(name = "PAYMENT_STATUS")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Column(name = "AMOUNT")
+    private double amount;
+
+}
+
+***************************************Service Layer*****************************************************
+@Log4j2
+@Service
+public class PaymentServiceImpl implements IPaymentService {
+
+    @Inject
+    private ITransactionDetailsRepository transactionDetailsRepository;
+
+    @Override
+    public long makePayment(PaymentRequest paymentRequest) {
+        log.info("Making payment for order {} ", paymentRequest.getOrderId());
+        TransactionDetails transactionDetails= TransactionDetails.builder()
+                .orderId(paymentRequest.getOrderId())
+                .paymentMode(paymentRequest.getPaymentMode())
+                .paymentStatus(PaymentStatus.SUCCESS)
+                .paymentDate(Instant.now())
+                .amount(paymentRequest.getAmount())
+                .build();
+        transactionDetailsRepository.save(transactionDetails);
+
+        return transactionDetails.getId();
+    }
+}
+
+*********************************************************************************************************
+=> Calling doPayment API from order service
+    Step1:-> Create an interface in external folder
+    Step2:-> Mark the interface with @FeighnClient annotation
+    Step3:-> Give declaration of API which we want to call with same path and arguments
+    
+    @FeignClient(name= "PAYMENT-SERVICE/payment")
+    public interface IPaymentService {
+        @PostMapping("/doPayment")
+        ResponseEntity<Long> doPayment(@RequestBody PaymentRequest paymentRequest);
+    }
+    
+    Step4:-> Now we can call this API in orderservice anywhere.
+
+*********************************************************************************************************
+=>Calling services using RestTemplate
+
+    
