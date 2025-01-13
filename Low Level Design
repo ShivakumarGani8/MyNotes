@@ -124,7 +124,8 @@ class Cycle implements Bike{
   -> We should not have all the functionality in the interface. Instead we can divide the interfaces to sub types
 
 5. D - Dependency Inversion Principle
-  -> A class should depenedent on interface rather than the concrete class
+  -> A class should depenedent on interface rather than the concrete class.
+  -> We should design a class such that we use interfaces instead of the sub-class
   
 
 
