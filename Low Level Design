@@ -1,0 +1,133 @@
+  Low Level Design
+  * SOLID Principles in Design
+  1. S - Single Responsibility Principle
+      -> A class should have only one reason to change such that., We design a class such that it has only one functionality.
+
+      EX: class Invoice{
+        private Marker marker;
+        private int quantity;
+
+        public Invoce(Marker marker, int quantitiy){
+          this.marker=marker;
+          this.quantity=quantity;
+        }
+
+        public int calculateTotal(){
+          int price= marker.price*quantity;
+          return price;
+        }
+        public void saveToDB(){
+          //Saves data to DB
+        }
+      }
+
+        -- We get an requirement to change the functionality in calcualteTotal to make changes we also might work on saveToDB functionality.
+        -- Which is not a good design to overcome this we assign 2 different classess for different functionality.
+      Refractored Design:
+      class InvoiceCalcualteTotal{
+        private Marker marker;
+        private int quantity;
+        public Invoce(Marker marker, int quantitiy){
+          this.marker=marker;
+          this.quantity=quantity;
+        }
+        public int calculateTotal(){
+          int price= marker.price*quantity;
+          return price;
+        }
+      }
+
+      class InvoiceDao{
+        private Invoice invoice;
+        InvoiceDao(Invoice invoice){
+          this invoice=invoice;
+        }
+        public void saveToDB(){
+          //Saves to DB
+        } 
+      }
+
+      --We can use both the classes idividually for each functionlitites and we can operate them when needs changes in future.
+
+  2. O- Open/Closed Principle
+    -> Open for extension but closed for modification.
+    -> Here we extend the base class for different functionality and make it unmodifiable for changes.
+
+    Ex: class InvoiceDao{
+        InvoiceDao(Invoice invoice){
+          this invoice=invoice;
+        }
+
+        public void saveToDB(){
+          // For saving to DB
+        }
+
+        // Newley added functionality
+        public void saveToFile(){
+          // For saving to File
+        }
+    }
+
+  --If we get new requirements to make changes to different DB. we go for modifing the base class itself.
+  --To prevent this we go for
+    interface InvoiceDao{
+        public void save(Invoice invoice);
+    }
+
+    class SaveToDB implements InvoiceDao{
+       public void saveToDB(){
+          // For saving to DB
+        }
+    }
+
+    class SaveToFile implements InvoiceDao{
+       public void saveToDB(){
+          // For saving to DB
+        }
+    }      
+
+  3. L- Liskov Substitution principle
+  -> If class B is a subtype of A, Then we should be able to replace the object of A with B without braking the behavior of the program.
+  -> Sub-Class should extend the functionallity rather than narrowing.
+
+  Ex: interface Bike{
+    void turnOnEngine();
+    void accelerate();
+  }
+
+  class Motorcycle implements Bike{
+    private boolean turnOnEngine;
+    private int speed;
+    public void turnOnEngine(boolean turnOnEngine){
+      this.turnOnEngine=turnOnEngine;
+    }
+    public void accelerate(int speed){
+      this.speed=speed;
+    }
+  }
+
+class Cycle implements Bike{
+    private int speed;
+    public void turnOnEngine(boolean turnOnEngine){
+      throw new Exeption("There is no engine");
+    }
+    public void accelerate(int speed){
+      this.speed=speed;
+    }
+  }
+  
+  --If we extend the Bike interface for Cycle we'll not have functionality of turnOnEngine which makes design failure.
+
+
+4. I - Interfaces segmented Principle
+  -> An interface should such it should not have unnecessary funtionality for all the class.
+  -> We should not have all the functionality in the interface. Instead we can divide the interfaces to sub types
+
+5. D - Dependency Inversion Principle
+  -> A class should depenedent on interface rather than the concrete class.
+  -> We should design a class such that we use interfaces instead of the sub-class
+  
+
+
+
+      
