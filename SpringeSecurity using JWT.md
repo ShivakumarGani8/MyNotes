@@ -8,7 +8,7 @@
 4. CSRF Protection: Prevents CSRF attacks by adding tokens to forms and verifying their legitimacy.
 5. Method Security: Allows annotation-based security at the method level (e.g., @PreAuthorize and @Secured).
 6. Session Management: Manages user sessions, ensuring that session-based attacks such as session fixation are prevented.
-Integration with OAuth2 and JWT: Supports modern security mechanisms like OAuth2, allowing integration with identity providers like Google, Facebook, or custom OAuth2 servers.
+7. Integration with OAuth2 and JWT: Supports modern security mechanisms like OAuth2, allowing integration with identity providers like Google, Facebook, or custom OAuth2 servers.
 
 Basic Configuration in Spring Boot:
 To add Spring Security to a Spring Boot application, include the following dependency in your pom.xml:

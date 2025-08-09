@@ -2,9 +2,9 @@ Ref:- https://medium.com/@ankithahjpgowda/api-gateway-in-spring-boot-3ea80400302
 
 => API Gateway — receives incoming requests, performs authentication (if enabled) and forwards requests to actual microservice. On getting the response, return it to the consumer.
 
-=> An API Gateway acts as an entry point for client requests in a microservices architecture. It sits between the client and a set of backend services, handling all the external API requests. The key f
+=> An API Gateway acts as an entry point for client requests in a microservices architecture. It sits between the client and a set of backend services, handling all the external API requests.
 
-- functions of an API Gateway include:
+- The key functions of an API Gateway include:
     1. Request Routing: The gateway routes client requests to the appropriate microservice.
     2. Security: It can handle authentication, authorization, and rate limiting.
     3. Load Balancing: It can distribute traffic across multiple instances of services.
