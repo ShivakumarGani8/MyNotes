@@ -1,0 +1,44 @@
+☆Annotations:
+   @Scope - singleton,prototype,request,session
+   @ConditionalOnProperty
+   @Value
+   @Profile
+
+☆AOP (Aspect oriented programming)
+   >@Aspect - class marked as aspect which used for intercepting
+   >@Before(before a method),@After(after method),@Around(before method starts and after method ends) - Executes during interecptipm
+   >within(applied to method expression),@within(applied to method scoped annotations)
+  > args(matches arguments of a method)
+  >target(applied to a target object)
+
+☆Transaction
+ >@Transactional - Follows AOP internally
+ Commit id all success rollback if any failure
+>Propagations - Required(Default value and uses if parent transaction exists,REQUIRED_NEW(creates new transaction even parent exists), SUPPORT(If parent exists use it else, without transaction), NOT_SUPPORTED(If parent exists suspend parent, run current without transaction else run without ajy transaction),  MANDATORY(If parent is not Transactional use it else throw exception), NEVER(If parent is transactional throw exception else execute)
+ >TransactionManager- Hibernate,Jdbc, Jpa etc..( provides getTransaction, commit and rollback methods)
+
+☆Isolation
+  >Lock types- Shared lock(Shared lock between 2 transactions. If shared locked aquired another query can aquire read but, not the write), Exclusive lock(If lock aquired by 1 transaction no other query can either read nor write)
+ >Isolation problems- Dirty read(Reads uncommited data), Non-Repeatable read problem(Same transaction might returns tye different values upon repeated reads),
+Phanthom read problem(If range of data's returned might be differ when same transaction again reads in the same range)
+ > Types of Isolation- Read uncommited(Reads uncommited changes by another), Read commited(Read only commited changes by other transactions/Aquires read lock and releases as soon as read completes, Aquires exclusive lock for write and releases at the end of transaction), Repeatable Read(Aquires shared lock for read and holds till the end of transaction, Aquires Exclusive lock for write and holds till the end of transaction), Serializable(Holds shared lock for range of transactions till the end so that no transaction can write  in the ranges)
+
+
+☆@Async - Annotation used to execute a particular method asynchronously. To enable async in spring boot we need to mark SpringBootApplication class with @EnableAsync annotation.
+- How threads created?
+When this annotation is used Spring will loom for any default ThreadPoolTaskExecutor(Internally uses java ThreadPoolExecutor) is provided if provided it'll use the default one else it'll create pool for SimpleAsyncTaskExecutor.
+- If we create ThreadPoolExecutor(Java) springboot will not auto pick it as deafult executor instead it'll go with SimpleAsyncTaskExecutor so explicitly we have to provide threadpoolname in @Async annotation to pick default executor. Or we can implement the AsyncConfigurer to Configuration classes and provide implementation to getAsyncExecutor method so this will be considered as deafult executor
+
+☆Interceptor
+   -Interceptor executes before a controller is called. We can create interceptor by implementation of HandleInterceptor interface(we need to provide implementation of 3 methods) preHandler(Before method), postHandler(After method), afterCompletion(This handler exection is compolsory even there is exception this week executes)
+
+
+☆JPA - First level of caching
+   In first level of caching 1 new entity manager will be created to each of the http request and entiryManager will create PersistentContext for each request.
+ When read call will be made JPA will try to find the data in Persistent context first if not found it'll do the select call to DB and put it in the PersistentContext any subsequent calls made in the same httpRequest will fetch the data from same PersistentContext
+
+☆Level two caching
+  - To enable 2nd level caching we basically need 3 dependencies(any cache provider-> Ex: ehcache, interface to interact with from  jcache -> cache-api, interface to interact between hibernate and jcache-api -> hibernate-jcache)
+  - once dependecies added we can enable caching by setting enable second level caching set to true, also we need to set the region factory class in app.properies(which helps grouping entity to region so that we can set caching stratergies to a region the configs such as cache time etc...), Additionally we need to provide ehcachce config in app.properties.
+  - To mark an entity as cached we need to add @cache annotation which accepts 2 values usage( cacheconcurrncy stratergy), region
+  - CacheConcurrencuStratreiges-> READ_ONLY(only enables reading on the entity no updates are allowed) READ_WRITE(It puts exclusive lock on the cache entity and mark with inavalidate flag then updates thr data on DB after it'll update the cache aswell), NONSTRICT_READ_WRITE(it'll mark the entity with invalidate flag in cache and update date in db but, no update of cache will happen any get call will hit the db directly when flag is true), TRANSACTIONAL(it aquires lock for both read and write operation any read or write call during lock will go to db directly)
